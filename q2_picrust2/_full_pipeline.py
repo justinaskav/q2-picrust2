@@ -3,7 +3,8 @@ from os import path
 import pandas as pd
 from tempfile import TemporaryDirectory
 import picrust2.pipeline
-from picrust2.default import (default_ref_dir, default_tables,
+from picrust2.default import (default_ref_dir_bac, default_ref_dir_arc,
+                              default_tables_bac, default_tables_arc,
                               default_regroup_map, default_pathway_map)
 
 
@@ -41,15 +42,18 @@ def full_pipeline(table: biom.Table,
 
         picrust2_out = path.join(temp_dir, "picrust2_out")
 
-        func_outputs, pathway_outputs = picrust2.pipeline.full_pipeline(study_fasta=seq_outfile,
+        func_outputs, pathway_outputs = picrust2.pipeline.full_pipeline_split(study_fasta=seq_outfile,
                                                                         input_table=biom_infile,
                                                                         output_folder=picrust2_out,
                                                                         processes=threads,
                                                                         placement_tool=placement_tool,
-                                                                        ref_dir=default_ref_dir,
+                                                                        ref_dir1=default_ref_dir_bac,
+                                                                        ref_dir2=default_ref_dir_arc,
                                                                         in_traits="EC,KO",
-                                                                        custom_trait_tables=None,
-                                                                        marker_gene_table=default_tables["16S"],
+                                                                        custom_trait_tables_ref1=None,
+                                                                        custom_trait_tables_ref2=None,
+                                                                        marker_gene_table_ref1=default_tables_bac["16S"],
+                                                                        marker_gene_table_ref2=default_tables_arc["16S"],
                                                                         pathway_map=default_pathway_map,
                                                                         rxn_func="EC",
                                                                         no_pathways=False,
@@ -62,7 +66,6 @@ def full_pipeline(table: biom.Table,
                                                                         hsp_method=hsp_method,
                                                                         edge_exponent=edge_exponent,
                                                                         min_align=min_align,
-                                                                        skip_nsti=False,
                                                                         skip_minpath=skip_minpath,
                                                                         no_gap_fill=no_gap_fill,
                                                                         coverage=False,
